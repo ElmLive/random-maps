@@ -7,14 +7,24 @@ import Random
 
 random : Random.Generator (Map)
 random =
-    Random.map3 map
+    Random.map4 map
+        (Random.map3 (,,)
+            (Random.pair (Random.int 0 10) (Random.int 1 9))
+            (Random.pair (Random.int 0 10) (Random.int 1 9))
+            (Random.pair (Random.int 0 10) (Random.int 1 9))
+        )
         (Random.pair (Random.int 0 10) (Random.int 1 9))
         (Random.pair (Random.int 0 10) (Random.int 1 9))
         (Random.pair (Random.int 0 10) (Random.int 1 9))
 
 
-map : ( Int, Int ) -> ( Int, Int ) -> ( Int, Int ) -> Map
-map ( rx, ry ) ( r2x, r2y ) ( r3x, r3y ) =
+map :
+    ( ( Int, Int ), ( Int, Int ), ( Int, Int ) )
+    -> ( Int, Int )
+    -> ( Int, Int )
+    -> ( Int, Int )
+    -> Map
+map ( ( rx, ry ), ( r2x, r2y ), ( r3x, r3y ) ) innLocation armorLocation weaponLocation =
     let
         addFirstRoad d =
             d
@@ -61,15 +71,35 @@ map ( rx, ry ) ( r2x, r2y ) ( r3x, r3y ) =
                     |> Dict.insert ( x - 1, y + 1 ) "road"
             else
                 d
+
+        connectToRoads ( x, y ) d =
+            let
+                nextPoint =
+                    ( x - 1, y )
+            in
+                if Dict.get nextPoint d == Nothing then
+                    d
+                        |> Dict.insert nextPoint "road"
+                else
+                    d
+
+        placeBuilding ( x, y ) tile d =
+            if
+                (Dict.get ( x, y ) d == Nothing)
+                    && (Dict.get ( x - 1, y ) d == Nothing)
+            then
+                d
+                    |> moveRoad ( x, y )
+                    |> Dict.insert ( x, y ) tile
+                    |> connectToRoads ( x, y )
+            else
+                placeBuilding ( (x + 2) % 10, (y + 1) % 10 ) tile d
     in
         Dict.empty
             |> addFirstRoad
             |> addSecondRoad
             |> addThridRoad
-            |> moveRoad ( 3, 4 )
-            |> Dict.insert ( 3, 4 ) "inn"
-            |> moveRoad ( 3, 5 )
-            |> Dict.insert ( 3, 5 ) "armor shop"
-            |> moveRoad ( 3, 6 )
-            |> Dict.insert ( 3, 6 ) "weapon shop"
+            |> placeBuilding innLocation "inn"
+            |> placeBuilding armorLocation "armor shop"
+            |> placeBuilding (weaponLocation) "weapon shop"
             |> Map.dictMap "grass"

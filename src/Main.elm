@@ -31,7 +31,7 @@ main : Program Never
 main =
     Html.App.program
         { init =
-            ( { map = map 43 }
+            ( { map = map 1454699738 }
             , Random.generate NewMap Maps.Town.random
               -- , Cmd.none
             )

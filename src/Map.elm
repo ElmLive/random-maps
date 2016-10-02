@@ -1,4 +1,4 @@
-module Map exposing (Map, Point, Tile, dictMap, fold, any)
+module Map exposing (Map, Point, Tile, dictMap, fold, any, findAll)
 
 import Dict exposing (Dict)
 
@@ -30,19 +30,19 @@ dictMap default dict =
 -- Inspecting
 
 
-fold : (Tile -> a -> a) -> a -> Map -> a
+fold : (Point -> Tile -> a -> a) -> a -> Map -> a
 fold fn init map =
     fold' fn init map ( 0, 0 )
 
 
-fold' : (Tile -> a -> a) -> a -> Map -> Point -> a
+fold' : (Point -> Tile -> a -> a) -> a -> Map -> Point -> a
 fold' fn init map ( x, y ) =
     let
         tile =
             map ( x, y )
 
         newValue =
-            fn tile init
+            fn ( x, y ) tile init
     in
         if y >= 10 then
             newValue
@@ -52,12 +52,25 @@ fold' fn init map ( x, y ) =
             fold' fn newValue map ( x + 1, y )
 
 
-any : (Tile -> Bool) -> (Point -> Tile) -> Bool
+findAll : Tile -> Map -> List Point
+findAll tileToFind map =
+    fold
+        (\point tile results ->
+            if tile == tileToFind then
+                point :: results
+            else
+                results
+        )
+        []
+        map
+
+
+any : (Tile -> Bool) -> Map -> Bool
 any predicate map =
     any' predicate map ( 0, 0 )
 
 
-any' : (Tile -> Bool) -> (Point -> Tile) -> Point -> Bool
+any' : (Tile -> Bool) -> Map -> Point -> Bool
 any' predicate map ( x, y ) =
     let
         tile =
