@@ -15,22 +15,22 @@ import Html exposing (Html)
 
 grounds : Int -> Int -> Html msg
 grounds =
-    sprite 288 608 "Tilesets/Gervais/dg_grounds32.png"
+    sprite 288 608 "src/Tilesets/Gervais/dg_grounds32.png"
 
 
 dungeon : Int -> Int -> Html msg
 dungeon =
-    sprite 288 320 "Tilesets/Gervais/dg_dungeon32.png"
+    sprite 288 320 "src/Tilesets/Gervais/dg_dungeon32.png"
 
 
 features : Int -> Int -> Html msg
 features =
-    sprite 288 416 "Tilesets/Gervais/dg_features32.png"
+    sprite 288 416 "src/Tilesets/Gervais/dg_features32.png"
 
 
 town0 : Int -> Int -> Html msg
 town0 =
-    sprite 288 128 "Tilesets/Gervais/dg_town032.png"
+    sprite 288 128 "src/Tilesets/Gervais/dg_town032.png"
 
 
 tile : String -> Html msg

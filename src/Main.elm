@@ -3,40 +3,23 @@ module Main exposing (..)
 import Tilesets.Gervais
 import Html exposing (Html)
 import Html.Attributes
+import Map
+import Maps.Town
 
 
 main : Html msg
 main =
     view
-        (\{ x, y } ->
-            case x + y of
-                6 ->
-                    { tile = "desert" }
-
-                7 ->
-                    { tile = "dark desert" }
-
-                _ ->
-                    { tile = "grass" }
-        )
+        Maps.Town.map
         Tilesets.Gervais.tile
 
 
-type alias Point =
-    { x : Int, y : Int }
-
-
-type alias Tile =
-    { tile : String }
-
-
-view : (Point -> Tile) -> (String -> Html msg) -> Html msg
+view : (Map.Point -> Map.Tile) -> (String -> Html msg) -> Html msg
 view map tileset =
     let
         tile y x =
-            { x = x, y = y }
+            ( x, y )
                 |> map
-                |> .tile
                 |> tileset
 
         row y =
