@@ -5,12 +5,16 @@ import Html exposing (Html)
 import Html.Attributes
 
 
+main : Html msg
 main =
     view
         (\{ x, y } ->
-            case x - y - y of
-                4 ->
-                    { tile = "water" }
+            case x + y of
+                6 ->
+                    { tile = "desert" }
+
+                7 ->
+                    { tile = "dark desert" }
 
                 _ ->
                     { tile = "grass" }
@@ -26,11 +30,12 @@ type alias Tile =
     { tile : String }
 
 
-view tileFn tileset =
+view : (Point -> Tile) -> (String -> Html msg) -> Html msg
+view map tileset =
     let
         tile y x =
             { x = x, y = y }
-                |> tileFn
+                |> map
                 |> .tile
                 |> tileset
 
