@@ -47,19 +47,50 @@ mapTests =
 townMapTests : Test
 townMapTests =
     describe "Town map generation"
-        [ fuzz Fuzz.int "contains some grass" <|
+        [ fuzz Fuzz.int "contains at least 10% grass" <|
             \seed ->
                 Random.step Maps.Town.random (Random.initialSeed seed)
                     |> fst
-                    |> Map.any (\tile -> tile == "grass")
-                    |> Expect.true "Expected map to contain grass"
-        , fuzz Fuzz.int "contains some road" <|
+                    |> countTiles "grass"
+                    |> Expect.greaterThan 10
+        , fuzz Fuzz.int "contains at least 10% road" <|
             \seed ->
                 Random.step Maps.Town.random (Random.initialSeed seed)
                     |> fst
-                    |> Map.any (\tile -> tile == "road")
-                    |> Expect.true "Expected map to contain road"
+                    |> countTiles "road"
+                    |> Expect.greaterThan 10
+        , fuzz Fuzz.int "has exactly one inn" <|
+            \seed ->
+                Random.step Maps.Town.random (Random.initialSeed seed)
+                    |> fst
+                    |> countTiles "inn"
+                    |> Expect.equal 1
+        , fuzz Fuzz.int "has at least one armor shop" <|
+            \seed ->
+                Random.step Maps.Town.random (Random.initialSeed seed)
+                    |> fst
+                    |> countTiles "armor shop"
+                    |> Expect.greaterThan 0
+        , fuzz Fuzz.int "has at least one weapon shop" <|
+            \seed ->
+                Random.step Maps.Town.random (Random.initialSeed seed)
+                    |> fst
+                    |> countTiles "weapon shop"
+                    |> Expect.greaterThan 0
         ]
+
+
+countTiles : String -> Map.Map -> Int
+countTiles tileToCount map =
+    Map.fold
+        (\tile acc ->
+            if tile == tileToCount then
+                acc + 1
+            else
+                acc
+        )
+        0
+        map
 
 
 all : Test

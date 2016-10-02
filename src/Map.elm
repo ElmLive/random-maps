@@ -1,4 +1,4 @@
-module Map exposing (Map, Point, Tile, dictMap, any)
+module Map exposing (Map, Point, Tile, dictMap, fold, any)
 
 import Dict exposing (Dict)
 
@@ -28,6 +28,28 @@ dictMap default dict =
 
 
 -- Inspecting
+
+
+fold : (Tile -> a -> a) -> a -> Map -> a
+fold fn init map =
+    fold' fn init map ( 0, 0 )
+
+
+fold' : (Tile -> a -> a) -> a -> Map -> Point -> a
+fold' fn init map ( x, y ) =
+    let
+        tile =
+            map ( x, y )
+
+        newValue =
+            fn tile init
+    in
+        if y >= 10 then
+            newValue
+        else if x >= 10 then
+            fold' fn newValue map ( 0, y + 1 )
+        else
+            fold' fn newValue map ( x + 1, y )
 
 
 any : (Tile -> Bool) -> (Point -> Tile) -> Bool
