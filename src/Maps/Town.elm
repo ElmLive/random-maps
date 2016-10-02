@@ -1,12 +1,18 @@
-module Maps.Town exposing (map)
+module Maps.Town exposing (random, map)
 
 import Dict exposing (Dict)
-import Map
+import Map exposing (Map)
+import Random
 
 
-map : Map.Point -> Map.Tile
-map =
+random : Random.Generator (Map)
+random =
+    Random.map map (Random.pair (Random.int 0 10) (Random.int 1 9))
+
+
+map : ( Int, Int ) -> Map
+map ( rx, ry ) =
     Dict.empty
-        |> Dict.insert ( 5, 5 ) "grass"
-        |> Dict.insert ( 5, 4 ) "road"
+        |> Dict.insert ( rx, ry ) "grass"
+        |> Dict.insert ( rx, ry - 1 ) "road"
         |> Map.dictMap "water"

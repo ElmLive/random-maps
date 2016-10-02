@@ -5,12 +5,19 @@ import Html exposing (Html)
 import Html.Attributes
 import Map
 import Maps.Town
+import Random
+
+
+map : Int -> Map.Map
+map seed =
+    Random.step Maps.Town.random (Random.initialSeed seed)
+        |> fst
 
 
 main : Html msg
 main =
     view
-        Maps.Town.map
+        (map 12)
         Tilesets.Gervais.tile
 
 
@@ -23,10 +30,10 @@ view map tileset =
                 |> tileset
 
         row y =
-            [0..10]
+            [0..9]
                 |> List.map (tile y)
                 |> Html.div [ Html.Attributes.style [ ( "line-height", "1px" ) ] ]
     in
-        [0..10]
+        [0..9]
             |> List.map row
             |> Html.div []
